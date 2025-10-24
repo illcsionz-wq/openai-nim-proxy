@@ -6,6 +6,9 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Memory and timeout management
+const TIMEOUT_MS = 55000; // 55 seconds (Railway has 60s limit)
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -58,6 +61,10 @@ app.get('/v1/models', (req, res) => {
 
 // Chat completions endpoint (main proxy)
 app.post('/v1/chat/completions', async (req, res) => {
+  // Set timeout for the entire request
+  req.setTimeout(TIMEOUT_MS);
+  res.setTimeout(TIMEOUT_MS);
+  
   try {
     const { model, messages, temperature, max_tokens, stream } = req.body;
     
@@ -102,13 +109,15 @@ app.post('/v1/chat/completions', async (req, res) => {
     };
     
     // Make request to NVIDIA NIM API
-    const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
+ const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
   headers: {
     'Authorization': `Bearer ${NIM_API_KEY}`,
     'Content-Type': 'application/json'
   },
   responseType: stream ? 'stream' : 'json',
-  timeout: 120000  // 120 seconds (2 minutes)
+  timeout: TIMEOUT_MS,
+  maxContentLength: 50 * 1024 * 1024, // 50MB limit
+  maxBodyLength: 50 * 1024 * 1024
 });
     
     if (stream) {
