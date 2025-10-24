@@ -6,9 +6,6 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Memory and timeout management
-const TIMEOUT_MS = 55000; // 55 seconds (Railway has 60s limit)
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -23,15 +20,15 @@ const SHOW_REASONING = false; // Set to true to show reasoning with <think> tags
 // 🔥 THINKING MODE TOGGLE - Enables thinking for specific models that support it
 const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwargs thinking parameter
 
-// Model mapping (adjust based on available NIM models)
+// Model mapping (optimized for stability and NSFW)
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
-  'gpt-4': 'qwen/qwen3-coder-480b-a35b-instruct',
-  'gpt-4-turbo': 'moonshotai/kimi-k2-instruct-0905',
+  'gpt-3.5-turbo': 'meta/llama-3.1-8b-instruct',
+  'gpt-4': 'meta/llama-3.3-70b-instruct',
+  'gpt-4-turbo': 'meta/llama-3.1-70b-instruct',
   'gpt-4o': 'meta/llama-3.1-405b-instruct',
-  'claude-3-opus': 'openai/gpt-oss-120b',
-  'claude-3-sonnet': 'openai/gpt-oss-20b',
-  'gemini-pro': 'qwen/qwen3-next-80b-a3b-thinking' 
+  'claude-3-opus': 'meta/llama-3.1-405b-instruct',
+  'claude-3-sonnet': 'meta/llama-3.3-70b-instruct',
+  'gemini-pro': 'meta/llama-3.1-70b-instruct'
 };
 
 // Health check endpoint
@@ -61,9 +58,7 @@ app.get('/v1/models', (req, res) => {
 
 // Chat completions endpoint (main proxy)
 app.post('/v1/chat/completions', async (req, res) => {
-  // Set timeout for the entire request
-  req.setTimeout(TIMEOUT_MS);
-  res.setTimeout(TIMEOUT_MS);
+  console.log(`[${new Date().toISOString()}] Request started - Model: ${req.body.model}`);
   
   try {
     const { model, messages, temperature, max_tokens, stream } = req.body;
@@ -102,23 +97,25 @@ app.post('/v1/chat/completions', async (req, res) => {
     const nimRequest = {
       model: nimModel,
       messages: messages,
-      temperature: temperature || 0.6,
+      temperature: temperature || 0.9,
       max_tokens: max_tokens || 1024,
       extra_body: ENABLE_THINKING_MODE ? { chat_template_kwargs: { thinking: true } } : undefined,
-      stream: true
+      stream: stream !== false
     };
     
+    console.log(`Using NVIDIA model: ${nimModel}`);
+    
     // Make request to NVIDIA NIM API
- const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
-  headers: {
-    'Authorization': `Bearer ${NIM_API_KEY}`,
-    'Content-Type': 'application/json'
-  },
-  responseType: stream ? 'stream' : 'json',
-  timeout: TIMEOUT_MS,
-  maxContentLength: 50 * 1024 * 1024, // 50MB limit
-  maxBodyLength: 50 * 1024 * 1024
-});
+    const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
+      headers: {
+        'Authorization': `Bearer ${NIM_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      responseType: stream ? 'stream' : 'json',
+      timeout: 120000, // 2 minutes
+      maxContentLength: 50 * 1024 * 1024,
+      maxBodyLength: 50 * 1024 * 1024
+    });
     
     if (stream) {
       // Handle streaming response with reasoning
@@ -131,13 +128,13 @@ app.post('/v1/chat/completions', async (req, res) => {
       
       response.data.on('data', (chunk) => {
         buffer += chunk.toString();
-        const lines = buffer.split('\\n');
+        const lines = buffer.split('\n');
         buffer = lines.pop() || '';
         
         lines.forEach(line => {
           if (line.startsWith('data: ')) {
             if (line.includes('[DONE]')) {
-              res.write(line + '\\n');
+              res.write(line + '\n\n');
               return;
             }
             
@@ -151,14 +148,14 @@ app.post('/v1/chat/completions', async (req, res) => {
                   let combinedContent = '';
                   
                   if (reasoning && !reasoningStarted) {
-                    combinedContent = '<think>\\n' + reasoning;
+                    combinedContent = '<think>\n' + reasoning;
                     reasoningStarted = true;
                   } else if (reasoning) {
                     combinedContent = reasoning;
                   }
                   
                   if (content && reasoningStarted) {
-                    combinedContent += '</think>\\n\\n' + content;
+                    combinedContent += '</think>\n\n' + content;
                     reasoningStarted = false;
                   } else if (content) {
                     combinedContent += content;
@@ -177,31 +174,30 @@ app.post('/v1/chat/completions', async (req, res) => {
                   delete data.choices[0].delta.reasoning_content;
                 }
               }
-              res.write(`data: ${JSON.stringify(data)}\\n\\n`);
+              res.write(`data: ${JSON.stringify(data)}\n\n`);
             } catch (e) {
-              res.write(line + '\\n');
+              res.write(line + '\n');
             }
           }
         });
       });
       
       response.data.on('end', () => {
-  console.log('Stream completed successfully');
-  res.write('data: [DONE]\n\n');
-  res.end();
-});
-
-response.data.on('error', (err) => {
-  console.error('Stream error:', err);
-  res.write(`data: {"error": "Stream interrupted: ${err.message}"}\n\n`);
-  res.end();
-});
-
-// Add timeout protection
-req.on('close', () => {
-  console.log('Client disconnected');
-  response.data.destroy();
-});
+        console.log(`[${new Date().toISOString()}] Stream completed successfully`);
+        res.write('data: [DONE]\n\n');
+        res.end();
+      });
+      
+      response.data.on('error', (err) => {
+        console.error('Stream error:', err);
+        res.write(`data: {"error": "Stream interrupted: ${err.message}"}\n\n`);
+        res.end();
+      });
+      
+      req.on('close', () => {
+        console.log('Client disconnected');
+        response.data.destroy();
+      });
     } else {
       // Transform NIM response to OpenAI format with reasoning
       const openaiResponse = {
@@ -213,7 +209,7 @@ req.on('close', () => {
           let fullContent = choice.message?.content || '';
           
           if (SHOW_REASONING && choice.message?.reasoning_content) {
-            fullContent = '<think>\\n' + choice.message.reasoning_content + '\\n</think>\\n\\n' + fullContent;
+            fullContent = '<think>\n' + choice.message.reasoning_content + '\n</think>\n\n' + fullContent;
           }
           
           return {
