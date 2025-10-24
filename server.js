@@ -96,19 +96,20 @@ app.post('/v1/chat/completions', async (req, res) => {
       model: nimModel,
       messages: messages,
       temperature: temperature || 0.6,
-      max_tokens: max_tokens || 2048,
+      max_tokens: max_tokens || 1024,
       extra_body: ENABLE_THINKING_MODE ? { chat_template_kwargs: { thinking: true } } : undefined,
       stream: true
     };
     
     // Make request to NVIDIA NIM API
     const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
-      headers: {
-        'Authorization': `Bearer ${NIM_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      responseType: stream ? 'stream' : 'json'
-    });
+  headers: {
+    'Authorization': `Bearer ${NIM_API_KEY}`,
+    'Content-Type': 'application/json'
+  },
+  responseType: stream ? 'stream' : 'json',
+  timeout: 120000  // 120 seconds (2 minutes)
+});
     
     if (stream) {
       // Handle streaming response with reasoning
@@ -175,11 +176,23 @@ app.post('/v1/chat/completions', async (req, res) => {
         });
       });
       
-      response.data.on('end', () => res.end());
-      response.data.on('error', (err) => {
-        console.error('Stream error:', err);
-        res.end();
-      });
+      response.data.on('end', () => {
+  console.log('Stream completed successfully');
+  res.write('data: [DONE]\n\n');
+  res.end();
+});
+
+response.data.on('error', (err) => {
+  console.error('Stream error:', err);
+  res.write(`data: {"error": "Stream interrupted: ${err.message}"}\n\n`);
+  res.end();
+});
+
+// Add timeout protection
+req.on('close', () => {
+  console.log('Client disconnected');
+  response.data.destroy();
+});
     } else {
       // Transform NIM response to OpenAI format with reasoning
       const openaiResponse = {
