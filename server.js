@@ -22,13 +22,13 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (optimized for stability and NSFW)
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo': 'mistralai/mistral-7b-instruct-v0.3',
-  'gpt-4': 'mistralai/mistral-large-2-instruct',
-  'gpt-4-turbo': 'mistralai/mixtral-8x22b-instruct-v0.1',
-  'gpt-4o': 'mistralai/mistral-large-2-instruct',
-  'claude-3-opus': 'qwen/qwen2.5-72b-instruct',
-  'claude-3-sonnet': 'mistralai/mistral-large-2-instruct',
-  'gemini-pro': 'qwen/qwen2.5-72b-instruct'
+  'gpt-3.5-turbo': 'meta/llama-3.1-8b-instruct',
+  'gpt-4': 'mistralai/mistral-large-2407',
+  'gpt-4-turbo': 'mistralai/mixtral-8x7b-instruct-v0.1',
+  'gpt-4o': 'mistralai/mistral-large-2407',
+  'claude-3-opus': 'qwen/qwen2-72b-instruct',
+  'claude-3-sonnet': 'mistralai/mistral-large-2407',
+  'gemini-pro': 'qwen/qwen2-72b-instruct'
 };
 
 // Health check endpoint
