@@ -23,11 +23,11 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (optimized for stability and NSFW)
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo': 'writer/palmyra-x-004-instruct',
-  'gpt-4': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
-  'gpt-4-turbo': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
-  'gpt-4o': 'writer/palmyra-x-004-instruct', // ⭐ BEST CHOICE
-  'claude-3-opus': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+  'gpt-3.5-turbo': 'meta/llama-3.3-70b-instruct',
+  'gpt-4': 'nvidia/nemotron-3-super-120b-a12b',
+  'gpt-4-turbo': 'nvidia/nemotron-3-super-120b-a12b',
+  'gpt-4o': 'nvidia/nemotron-3-super-120b-a12b', // ⭐ BEST CHOICE
+  'claude-3-opus': 'meta/llama-3.1-405b-instruct',
   'claude-3-sonnet': 'meta/llama-3.3-70b-instruct',
   'gemini-pro': 'meta/llama-3.1-405b-instruct'
 };
