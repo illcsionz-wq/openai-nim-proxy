@@ -27,7 +27,7 @@ const MAX_RETRIES = 2;
 // 🚀 VERIFIED FREE ENDPOINT MODELS - Exact names from NVIDIA NIM
 const MODEL_MAPPING = {
   'gpt-3.5-turbo': 'meta/llama-3.3-70b-instruct',
-  'gpt-4': 'meta/llama-3.1-405b-instruct',
+  'gpt-4': 'meta/llama-3.3-70b-instruct',
   'gpt-4-turbo': 'meta/llama-3.1-405b-instruct',
   'gpt-4o': 'z-ai/glm4.7', // EXACT from NVIDIA: z-ai/glm4.7 (no hyphen)
   'claude-3-opus': 'meta/llama-3.1-405b-instruct',
@@ -42,12 +42,6 @@ const FALLBACK_CHAIN = [
   'meta/llama-3.1-70b-instruct',     // #3 Reliable
   'meta/llama-3.1-8b-instruct'       // #4 Fast fallback
 ];
-
-// Force non-streaming for GLM-4.7 if needed
-if (nimModel === 'z-ai/glm4.7') {
-  stream = false;
-  nimRequest.stream = false;
-}
 
 // Helper function with retry + fallback logic
 async function makeNIMRequest(nimRequest, stream, retryCount = 0) {
@@ -121,6 +115,13 @@ app.post('/v1/chat/completions', async (req, res) => {
     // Get mapped model
     let nimModel = MODEL_MAPPING[model] || FALLBACK_CHAIN[0];
     
+    // Force non-streaming for GLM-4.7 (better compatibility)
+    let useStream = stream !== false;
+    if (nimModel === 'z-ai/glm4.7') {
+      useStream = false;
+      console.log('🔄 Forcing non-streaming mode for GLM-4.7');
+    }
+    
     // Transform request
     const nimRequest = {
       model: nimModel,
@@ -131,15 +132,15 @@ app.post('/v1/chat/completions', async (req, res) => {
       extra_body: (ENABLE_THINKING_MODE && nimModel === 'z-ai/glm4.7') 
         ? { chat_template_kwargs: { enable_thinking: true, clear_thinking: false } } 
         : undefined,
-      stream: stream !== false
+      stream: useStream
     };
     
     console.log(`🎯 Using NVIDIA model: ${nimModel}`);
     
     // Make request with retry logic
-    const response = await makeNIMRequest(nimRequest, stream);
+    const response = await makeNIMRequest(nimRequest, useStream);
     
-    if (stream) {
+    if (useStream) {
       // Streaming response
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
