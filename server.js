@@ -43,6 +43,12 @@ const FALLBACK_CHAIN = [
   'meta/llama-3.1-8b-instruct'       // #4 Fast fallback
 ];
 
+// Force non-streaming for GLM-4.7 if needed
+if (nimModel === 'z-ai/glm4.7') {
+  stream = false;
+  nimRequest.stream = false;
+}
+
 // Helper function with retry + fallback logic
 async function makeNIMRequest(nimRequest, stream, retryCount = 0) {
   try {
