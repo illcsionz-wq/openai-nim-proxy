@@ -1,4 +1,4 @@
-
+my
 // server.js - OpenAI to NVIDIA NIM API Proxy
 const express = require('express');
 const cors = require('cors');
@@ -23,13 +23,13 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (optimized for stability and NSFW)
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
-  'gpt-4': 'qwen/qwen3-coder-480b-a35b-instruct',
-  'gpt-4-turbo': 'moonshotai/kimi-k2-instruct-0905',
-  'gpt-4o': 'deepseek-ai/deepseek-v3.1-terminus',
-  'claude-3-opus': 'openai/gpt-oss-120b',
-  'claude-3-sonnet': 'openai/gpt-oss-20b',
-  'gemini-pro': 'qwen/qwen3-next-80b-a3b-thinking' 
+  'gpt-3.5-turbo': 'writer/palmyra-x-004-instruct',
+  'gpt-4': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+  'gpt-4-turbo': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+  'gpt-4o': 'writer/palmyra-x-004-instruct', // ⭐ BEST CHOICE
+  'claude-3-opus': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+  'claude-3-sonnet': 'meta/llama-3.3-70b-instruct',
+  'gemini-pro': 'meta/llama-3.1-405b-instruct'
 };
 
 // Health check endpoint
