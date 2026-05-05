@@ -22,20 +22,13 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (BEST FOR ROLEPLAY - proper paragraph breaks, natural writing)
 const MODEL_MAPPING = {
-  // Better for prose than Nemotron-Ultra
-  'gpt-3.5-turbo': 'nvidia/llama-3.3-70b-instruct', 
-  // High-intelligence, less "robotic" than the Coder version
-  'gpt-4': 'nvidia/nemotron-3-super-120b-a12b', 
-  // Excellent context but specifically better at dialogue/AO3 style
-  'gpt-4-turbo': 'moonshotai/kimi-k2-instruct-0905', 
-  // Frontier level for detailed GM prompt following
-  'gpt-4o': 'deepseek-ai/deepseek-v3.2', 
-  // The most "human-like" narrative structure in the 2026 ecosystem
-  'claude-3-opus': 'openai/gpt-oss-120b', 
-  // Fast, reliable, and better at paragraph breaks than 20b
-  'claude-3-sonnet': 'llama-3.1-70b-instruct', 
-  // Replaces the "thinking" logic with more immersive prose
-  'gemini-pro': 'qwen/qwen3-72b-instruct' 
+  'gpt-3.5-turbo': 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+  'gpt-4': 'qwen/qwen3-coder-480b-a35b-instruct',
+  'gpt-4-turbo': 'moonshotai/kimi-k2-instruct-0905',
+  'gpt-4o': 'deepseek-ai/deepseek-v3.1-terminus',
+  'claude-3-opus': 'openai/gpt-oss-120b',
+  'claude-3-sonnet': 'openai/gpt-oss-20b',
+  'gemini-pro': 'qwen/qwen3-next-80b-a3b-thinking' 
 };
 
 
