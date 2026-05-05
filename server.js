@@ -24,22 +24,16 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 const MODEL_MAPPING = {
   // Better for prose than Nemotron-Ultra
   'gpt-3.5-turbo': 'nvidia/llama-3.3-70b-instruct', 
-  
   // High-intelligence, less "robotic" than the Coder version
   'gpt-4': 'nvidia/nemotron-3-super-120b-a12b', 
-  
   // Excellent context but specifically better at dialogue/AO3 style
   'gpt-4-turbo': 'moonshotai/kimi-k2-instruct-0905', 
-  
   // Frontier level for detailed GM prompt following
   'gpt-4o': 'deepseek-ai/deepseek-v3.2', 
-  
   // The most "human-like" narrative structure in the 2026 ecosystem
   'claude-3-opus': 'openai/gpt-oss-120b', 
-  
   // Fast, reliable, and better at paragraph breaks than 20b
   'claude-3-sonnet': 'llama-3.1-70b-instruct', 
-  
   // Replaces the "thinking" logic with more immersive prose
   'gemini-pro': 'qwen/qwen3-72b-instruct' 
 };
