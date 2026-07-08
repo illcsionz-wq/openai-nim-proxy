@@ -28,7 +28,7 @@ const MODEL_MAPPING = {
   'gpt-4o': 'deepseek-ai/deepseek-v4-pro',  // KEEPING THIS
   'claude-3-opus': 'nvidia/nemotron-3-ultra-550b-a55b',
   'claude-3-sonnet': 'minimaxai/minimax-m2.7',
-  'gemini-pro': 'z-ai/glm-5.1'
+  'gemini-pro': 'z-ai/glm-5.2'
 };
 
 
