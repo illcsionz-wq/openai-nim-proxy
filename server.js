@@ -23,7 +23,7 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 // Model mapping (BEST FOR ROLEPLAY - proper paragraph breaks, natural writing)
 const MODEL_MAPPING = {
   'gpt-3.5-turbo': 'mistralai/mistral-medium-3.5-128b',
-  'gpt-4': 'nvidia/nemotron-3-super-120b-a12b',
+  'gpt-4': 'nvidia/nemotron-3-ultra-550b-a55b',
   'gpt-4-turbo': 'stepfun-ai/step-3.7-flash',
   'gpt-4o': 'deepseek-ai/deepseek-v4-pro',  // KEEPING THIS
   'claude-3-opus': 'nvidia/nemotron-3-ultra-550b-a55b',
