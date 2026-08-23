@@ -22,13 +22,14 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (BEST FOR ROLEPLAY - proper paragraph breaks, natural writing)
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo': 'mistralai/mistral-medium-3.5-128b',
-  'gpt-4': 'nvidia/nemotron-3-ultra-550b-a55b',
-  'gpt-4-turbo': 'stepfun-ai/step-3.7-flash',
+const MODEL_MAPPING = {
+  'gpt-3.5-turbo': 'mistralai/mistral-nemotron',
+  'gpt-4': 'mistralai/mistral-large-3-675b-instruct-2512',
+  'gpt-4-turbo': 'mistralai/mistral-large-3-675b-instruct-2512',
   'gpt-4o': 'deepseek-ai/deepseek-v4-pro',  // KEEPING THIS
-  'claude-3-opus': 'nvidia/nemotron-3-ultra-550b-a55b',
-  'claude-3-sonnet': 'minimaxai/minimax-m2.7',
-  'gemini-pro': 'z-ai/glm-5.2'
+  'claude-3-opus': 'moonshotai/kimi-k2-thinking',
+  'claude-3-sonnet': 'z-ai/glm-4.7',
+  'gemini-pro': 'deepseek-ai/deepseek-v3.2'
 };
 
 
