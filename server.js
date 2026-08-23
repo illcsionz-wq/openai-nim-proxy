@@ -26,10 +26,10 @@ const MODEL_MAPPING = {
   'gpt-3.5-turbo': 'mistralai/mistral-nemotron',
   'gpt-4': 'mistralai/mistral-large-3-675b-instruct-2512',
   'gpt-4-turbo': 'mistralai/mistral-large-3-675b-instruct-2512',
-  'gpt-4o': 'deepseek-ai/deepseek-v4-pro',  // KEEPING THIS
-  'claude-3-opus': 'moonshotai/kimi-k2-thinking',
-  'claude-3-sonnet': 'z-ai/glm-4.7',
-  'gemini-pro': 'deepseek-ai/deepseek-v3.2'
+  'gpt-4o': 'deepseek-ai/deepseek-v4-pro',  // KEEPING THIS (Active & Live)
+  'claude-3-opus': 'deepseek-ai/deepseek-r1-0528', // Replaced for superior reasoning/RP
+  'claude-3-sonnet': 'qwen/qwen3-235b-a22b', // Replaced with active flagship heavy-hitter
+  'gemini-pro': 'deepseek-ai/deepseek-v4-flash-0731' // Updated to the newest available v4 Flash
 };
 
 
