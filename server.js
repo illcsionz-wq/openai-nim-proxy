@@ -22,7 +22,6 @@ const ENABLE_THINKING_MODE = false; // Set to true to enable chat_template_kwarg
 
 // Model mapping (BEST FOR ROLEPLAY - proper paragraph breaks, natural writing)
 const MODEL_MAPPING = {
-const MODEL_MAPPING = {
   'gpt-3.5-turbo': 'mistralai/mistral-nemotron',
   'gpt-4': 'mistralai/mistral-large-3-675b-instruct-2512',
   'gpt-4-turbo': 'mistralai/mistral-large-3-675b-instruct-2512',
